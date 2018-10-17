@@ -43,6 +43,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <string.h>
+#include "consoleIO.h"
 
 /* USER CODE END Includes */
 
@@ -54,9 +55,6 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-static uint8_t tl_RxData[30];
-static uint8_t tl_TxData[30];
-static uint8_t tl_DataReady = 0;
 
 /* USER CODE END PV */
 
@@ -83,7 +81,6 @@ static void MX_DAC1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	strcpy(tl_TxData,"UserInterface\r\n");
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -92,8 +89,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  __HAL_UART_ENABLE_IT(&huart2,UART_IT_RXNE); // RX interrupt enable
-  __HAL_UART_ENABLE_IT(&huart2,UART_IT_TC); // TX interrupt enable
+  consoleInit();
 
   /* USER CODE END Init */
 
@@ -109,11 +105,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_DAC1_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart2,(uint8_t*)tl_RxData,1);
-  HAL_UART_Transmit_IT( &huart2,(uint8_t *)tl_TxData, strlen((char *)tl_TxData));
-//  HAL_UART_Transmit(&huart2,(uint8_t *)tl_TxData,strlen((char *)tl_TxData),10);
-  tl_TxData[0] = '0';
-//  HAL_UART_Receive_DMA(&huart2,(uint8_t *)tl_RxData,2);
+  StartConsoleIO();
 
   /* USER CODE END 2 */
 
@@ -126,12 +118,6 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
 
-	  if( tl_DataReady )
-	  {
-		  tl_DataReady = 0;
-//		  HAL_UART_Transmit(&huart2,(uint8_t *)tl_TxData,strlen((char *)tl_TxData),10);
-
-	  }
   }
   /* USER CODE END 3 */
 
@@ -324,29 +310,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(huart);
-
-  /* NOTE : This function should not be modified, when the callback is needed,
-            the HAL_UART_RxCpltCallback can be implemented in the user file.
-   */
-//  HAL_UART_Transmit(&huart2,(uint8_t *)tl_RxData,strlen((char *)tl_RxData),10);
-  HAL_UART_Receive_IT(&huart2,(uint8_t*)tl_RxData,1);
-
-  if( tl_TxData[0] == '9')
-  {
-	  tl_TxData[0] = '0';
-  }
-  else
-  {
-	  tl_TxData[0]++;
-  }
-  tl_TxData[1] = 0;
-  tl_DataReady = 1;
-  HAL_UART_Transmit_IT(&huart2,(uint8_t *)tl_RxData,1);
-}
 
 /* USER CODE END 4 */
 
