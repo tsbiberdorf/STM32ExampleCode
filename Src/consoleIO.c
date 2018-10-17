@@ -58,3 +58,15 @@ void StartConsoleIO()
 	//  HAL_UART_Receive_DMA(&huart2,(uint8_t *)tl_RxData,2);
 
 }
+
+void StartConsoleTask(void const * argument)
+{
+  /* USER CODE BEGIN StartConsoleTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartConsoleTask */
+}
+

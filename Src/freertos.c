@@ -1,8 +1,7 @@
 /**
   ******************************************************************************
-  * @file           : main.h
-  * @brief          : Header for main.c file.
-  *                   This file contains the common defines of the application.
+  * File Name          : freertos.c
+  * Description        : Code for freertos applications
   ******************************************************************************
   * This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -47,50 +46,57 @@
   ******************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H__
-#define __MAIN_H__
-
 /* Includes ------------------------------------------------------------------*/
+#include "FreeRTOS.h"
+#include "task.h"
 
-/* USER CODE BEGIN Includes */
+/* USER CODE BEGIN Includes */     
 
 /* USER CODE END Includes */
 
-/* Private define ------------------------------------------------------------*/
+/* Variables -----------------------------------------------------------------*/
 
-#define USER_Btn_Pin GPIO_PIN_13
-#define USER_Btn_GPIO_Port GPIOC
-#define LD3_Pin GPIO_PIN_14
-#define LD3_GPIO_Port GPIOB
-#define USB_PowerSwitchOn_Pin GPIO_PIN_6
-#define USB_PowerSwitchOn_GPIO_Port GPIOG
-#define USB_OverCurrent_Pin GPIO_PIN_7
-#define USB_OverCurrent_GPIO_Port GPIOG
-#define LD2_Pin GPIO_PIN_7
-#define LD2_GPIO_Port GPIOB
+/* USER CODE BEGIN Variables */
 
-/* ########################## Assert Selection ############################## */
-/**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
-  *        HAL drivers code
-  */
-/* #define USE_FULL_ASSERT    1U */
+/* USER CODE END Variables */
 
-/* USER CODE BEGIN Private defines */
+/* Function prototypes -------------------------------------------------------*/
 
-/* USER CODE END Private defines */
+/* USER CODE BEGIN FunctionPrototypes */
 
-#ifdef __cplusplus
- extern "C" {
-#endif
-void _Error_Handler(char *, int);
+/* USER CODE END FunctionPrototypes */
 
-#define Error_Handler() _Error_Handler(__FILE__, __LINE__)
-#ifdef __cplusplus
+/* Hook prototypes */
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
+void vApplicationMallocFailedHook(void);
+
+/* USER CODE BEGIN 4 */
+__weak void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
+{
+   /* Run time stack overflow checking is performed if
+   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
+   called if a stack overflow is detected. */
 }
-#endif
+/* USER CODE END 4 */
 
-#endif /* __MAIN_H__ */
+/* USER CODE BEGIN 5 */
+__weak void vApplicationMallocFailedHook(void)
+{
+   /* vApplicationMallocFailedHook() will only be called if
+   configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h. It is a hook
+   function that will get called if a call to pvPortMalloc() fails.
+   pvPortMalloc() is called internally by the kernel whenever a task, queue,
+   timer or semaphore is created. It is also called by various parts of the
+   demo application. If heap_1.c or heap_2.c are used, then the size of the
+   heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
+   FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+   to query the size of free heap space that remains (although it does not
+   provide information on how the remaining heap might be fragmented). */
+}
+/* USER CODE END 5 */
+
+/* USER CODE BEGIN Application */
+     
+/* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
