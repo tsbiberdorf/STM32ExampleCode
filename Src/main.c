@@ -83,7 +83,7 @@ static void MX_DAC1_Init(void);
 static void MX_ADC1_Init(void);
 void StartDefaultTask(void const * argument);
 void StartConsoleTask(void const * argument);
-void StartAdc3Task(void const * argument);
+void StartAdc1Task(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -153,7 +153,7 @@ int main(void)
   consoleTaskHandle = osThreadCreate(osThread(consoleTask), NULL);
 
   /* definition and creation of adc3Task */
-  osThreadDef(adc3Task, StartAdc3Task, osPriorityNormal, 0, 128);
+  osThreadDef(adc3Task, StartAdc1Task, osPriorityNormal, 0, 128);
   adc3TaskHandle = osThreadCreate(osThread(adc3Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -478,16 +478,16 @@ __weak void StartConsoleTask(void const * argument)
   /* USER CODE END StartConsoleTask */
 }
 
-/* StartAdc3Task function */
-__weak void StartAdc3Task(void const * argument)
+/* StartAdc1Task function */
+__weak void StartAdc1Task(void const * argument)
 {
-  /* USER CODE BEGIN StartAdc3Task */
+  /* USER CODE BEGIN StartAdc1Task */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END StartAdc3Task */
+  /* USER CODE END StartAdc1Task */
 }
 
 /**

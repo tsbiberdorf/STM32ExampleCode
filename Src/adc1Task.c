@@ -8,7 +8,7 @@
 #include "stm32h7xx_hal.h"
 #include "cmsis_os.h"
 
-void StartAdc3Task(void const * argument)
+void StartAdc1Task(void const * argument)
 {
 	vTaskDelay(200);
 	printf("StartAdc3Task\n");

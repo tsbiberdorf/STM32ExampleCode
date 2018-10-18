@@ -5,9 +5,9 @@
  *      Author: TBiberdorf
  */
 
-#ifndef ADC3TASK_H_
-#define ADC3TASK_H_
+#ifndef ADC1TASK_H_
+#define ADC1TASK_H_
 
 
 
-#endif /* ADC3TASK_H_ */
+#endif /* ADC1TASK_H_ */
