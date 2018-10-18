@@ -128,6 +128,10 @@ SECTIONS
     _edata = .;        /* define a global symbol at data end */
   } >DTCMRAM AT> FLASH
 
+  .sin_data :
+  {
+    *(.sin_data*);
+  } > RAM_D2
   
   /* Uninitialized data section */
   . = ALIGN(4);
