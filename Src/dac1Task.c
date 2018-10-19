@@ -9,6 +9,7 @@
 #include "stm32h7xx_hal.h"
 #include "cmsis_os.h"
 #include <stdio.h>
+#include <math.h>
 
 extern DAC_HandleTypeDef hdac1;
 extern TIM_HandleTypeDef htim6;
@@ -23,25 +24,12 @@ extern TIM_HandleTypeDef htim6;
 
 static DAC_ChannelConfTypeDef sConfig;
 #define DACx_CHANNEL (DAC_CHANNEL_1)
-#define SIZE_SIN_WAVE_ARRAY (32)
+#define SIZE_SIN_WAVE_ARRAY (64-1)
 #define USE_CONST_DATA (1)
 #define USE_SRAM_DATA (2)
 #define DMA_MEM_TO_USE (USE_SRAM_DATA)
 
-const uint16_t sine_wave_array[SIZE_SIN_WAVE_ARRAY] = {2047, 1648, 1264, 910, 600,  345,
-		156, 39,  0,  39,  156,  345,
-		600, 910, 1264, 1648, 2048, 2447,
-		2831, 3185, 3495, 3750, 3939, 4056,
-		4095, 4056, 3939, 3750, 3495, 3185,
-		2831, 2447};
-
-const uint16_t gSineWaveArray[SIZE_SIN_WAVE_ARRAY]= {2047, 1648, 1264, 910, 600,  345,
-		156, 39,  0,  39,  156,  345,
-		600, 910, 1264, 1648, 2048, 2447,
-		2831, 3185, 3495, 3750, 3939, 4056,
-		4095, 4056, 3939, 3750, 3495, 3185,
-		2831, 2447};
-__attribute__((section(".sin_data.tl_SinWaveData"))) uint16_t tl_SinWaveData[SIZE_SIN_WAVE_ARRAY];
+__attribute__((section(".sin_data.tl_SinWaveData"))) uint16_t tl_SinWaveData[SIZE_SIN_WAVE_ARRAY+1];
 
 
 /**
@@ -107,9 +95,11 @@ static void DAC_Ch1_SinWaveConfig(void)
 	}
 }
 
+
 static void SinWaveData()
 {
-#define LIMIT_LEVEL (4095)
+#define OFFSET (50)
+#define LIMIT_LEVEL (4095.0)/2
 #define DEFAULT_DATA (1)
 #define GENERATED_DATA (2)
 #define GENERATE_SIN_DATA (GENERATED_DATA)
@@ -117,61 +107,19 @@ static void SinWaveData()
 	int idx;
 	double value;
 
-#if (GENERATE_SIN_DATA == GENERATED_DATA)
 	for(idx=0;idx<SIZE_SIN_WAVE_ARRAY;idx++)
 	{
 		value = sin(PI/2 + PI*2*idx/SIZE_SIN_WAVE_ARRAY);
-		value = (LIMIT_LEVEL/2) - (value*(LIMIT_LEVEL/2));
-		tl_SinWaveData[idx] = (int16_t)value;
+		value = (LIMIT_LEVEL/2) - (value*(LIMIT_LEVEL/2));// + OFFSET;
+		tl_SinWaveData[idx] = (uint16_t)(value);
 	}
-	// generate data for ramp wave
-//	for(idx=0;idx<SIZE_SIN_WAVE_ARRAY;idx++)
-//	{
-//		value = (double)4095*((double)idx/SIZE_SIN_WAVE_ARRAY);
-//		tl_SinWaveData[idx] = (int16_t)value;
-//	}
-#endif
-#if 1
-#if (GENERATE_SIN_DATA == DEFAULT_DATA)
-	tl_SinWaveData[0] = 2047;
-	tl_SinWaveData[1] = 1648;
-	tl_SinWaveData[2] = 1264;
-	tl_SinWaveData[3] = 910;
-	tl_SinWaveData[4] = 600;
-	tl_SinWaveData[5] = 345;
-	tl_SinWaveData[6] = 156;
-	tl_SinWaveData[7] = 39;
-	tl_SinWaveData[8] = 0;
-	tl_SinWaveData[9] = 39;
-	tl_SinWaveData[10] = 156;
-	tl_SinWaveData[11] = 345;
-	tl_SinWaveData[12] = 600;
-	tl_SinWaveData[13] = 910;
-	tl_SinWaveData[14] = 1264;
-	tl_SinWaveData[15] = 1648;
-	tl_SinWaveData[16] = 2048;
-	tl_SinWaveData[17] = 2447;
-	tl_SinWaveData[18] = 2831;
-	tl_SinWaveData[19] = 3185;
-	tl_SinWaveData[20] = 3495;
-	tl_SinWaveData[21] = 3750;
-	tl_SinWaveData[22] = 3939;
-	tl_SinWaveData[23] = 4056;
-	tl_SinWaveData[24] = 4095;
-	tl_SinWaveData[25] = 4056;
-	tl_SinWaveData[26] = 3939;
-	tl_SinWaveData[27] = 3750;
-	tl_SinWaveData[28] = 3495;
-	tl_SinWaveData[29] = 3185;
-	tl_SinWaveData[30] = 2831;
-	tl_SinWaveData[31] = 2447;
-#endif
-#endif
 }
 
 void StartDac1Task(void const * argument)
 {
-
+//#define ADD_OFFSET (1)
+	int idx;
+	int AddOffset = 0;
 	vTaskDelay(200);
 	printf("StartDac1Task\n");
 
@@ -180,6 +128,7 @@ void StartDac1Task(void const * argument)
 #else
 	uint8_t selectWaveform = 1;
 #endif
+
 	SinWaveData();
 
 	/* Triangle Wave generator -------------------------------------------*/
@@ -198,6 +147,17 @@ void StartDac1Task(void const * argument)
 
 	for(;;)
 	{
+		if( AddOffset )
+		{
+			for(idx=0;idx<SIZE_SIN_WAVE_ARRAY;idx++)
+			{
+#if (ADD_OFFSET)
+				tl_SinWaveData[idx] += AddOffset;
+#endif
+			}
+			AddOffset = 0;
+		}
+
 		osDelay(1);
 	}
 	/* USER CODE END StartDac1Task */

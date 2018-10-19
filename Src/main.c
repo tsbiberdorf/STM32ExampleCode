@@ -166,7 +166,7 @@ int main(void)
   adc3TaskHandle = osThreadCreate(osThread(adc3Task), NULL);
 
   /* definition and creation of dac1Task */
-  osThreadDef(dac1Task, StartDac1Task, osPriorityLow, 0, 128);
+  osThreadDef(dac1Task, StartDac1Task, osPriorityLow, 0, 256);
   dac1TaskHandle = osThreadCreate(osThread(dac1Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -387,7 +387,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 0;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 0x1f;
+  htim6.Init.Period = 32;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
