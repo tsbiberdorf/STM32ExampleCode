@@ -13,7 +13,13 @@
 extern DAC_HandleTypeDef hdac1;
 extern TIM_HandleTypeDef htim6;
 
+#define TRIANGLE_WAVE_GENERATION (0)
+#define SINE_WAVE_GENERATION (1)
 
+/**
+ * @note select which signal wave generation to create
+ */
+#define SIGNAL_GENERATION (SINE_WAVE_GENERATION)
 
 static DAC_ChannelConfTypeDef sConfig;
 #define DACx_CHANNEL (DAC_CHANNEL_1)
@@ -112,17 +118,18 @@ static void SinWaveData()
 	double value;
 
 #if (GENERATE_SIN_DATA == GENERATED_DATA)
-//	for(idx=0;idx<SIZE_SIN_WAVE_ARRAY;idx++)
-//	{
-//		value = sin(PI/2 + PI*2*idx/SIZE_SIN_WAVE_ARRAY);
-//		value = (LIMIT_LEVEL/2) - (value*(LIMIT_LEVEL/2));
-//		tl_SinWaveData[idx] = (int16_t)value;
-//	}
 	for(idx=0;idx<SIZE_SIN_WAVE_ARRAY;idx++)
 	{
-		value = (double)4095*((double)idx/SIZE_SIN_WAVE_ARRAY);
+		value = sin(PI/2 + PI*2*idx/SIZE_SIN_WAVE_ARRAY);
+		value = (LIMIT_LEVEL/2) - (value*(LIMIT_LEVEL/2));
 		tl_SinWaveData[idx] = (int16_t)value;
 	}
+	// generate data for ramp wave
+//	for(idx=0;idx<SIZE_SIN_WAVE_ARRAY;idx++)
+//	{
+//		value = (double)4095*((double)idx/SIZE_SIN_WAVE_ARRAY);
+//		tl_SinWaveData[idx] = (int16_t)value;
+//	}
 #endif
 #if 1
 #if (GENERATE_SIN_DATA == DEFAULT_DATA)
